@@ -32,14 +32,24 @@ waiver and standing deploy pre-approval apply here.
       tests, JSON-LD FAQPage schema, sitemap.xml/robots.txt. All verified
       locally (`npm run build`, `npx vitest run`, `npx playwright test`,
       `npx eslint .` all clean). ✔ 2026-09-06.
-- [ ] M2 — Deploy: git repo, push, clone to VPS, docker compose up,
-      `julai-new-vhost`, verify live over HTTPS, confirm no other site on
-      the host was affected.
+- [x] M2 — Deploy: git repo (`yunniko/fraction-calculator`, public, Owner
+      approved), pushed, cloned to VPS, `docker compose --profile app up`
+      on port 30040, nginx vhost + TLS cert issued, verified live over
+      HTTPS at https://fractions.svc.julienika.cz — real browser check
+      (1 1/2 + 2/3 = 13/6, correct) and every other host container's
+      uptime confirmed unaffected. ✔ 2026-09-07.
 - [ ] M3 — Confirm indexing path (submit sitemap if/when Search Console
       access exists — see svc-lab Owner action list) and add monetization
       once an ad/payment account exists (blocked on Owner).
 
 **Progress log** (newest first):
+- 2026-09-07 — M2 complete. Deployed to https://fractions.svc.julienika.cz.
+  Hit and worked around a bug in the live `julai-new-vhost` script's
+  certbot call (garbled arguments — see HANDOVER.md D8); worked around by
+  running the separately-sudo-granted certbot command directly rather
+  than editing the root-owned script. Also hit and got Owner approval for
+  a GitHub email-privacy push rejection (repo-local commit email didn't
+  match the account's public email) — see HANDOVER.md D9.
 - 2026-09-06 — M1 complete, verified locally. See HANDOVER.md for the
   npm/arborist workaround (`--legacy-peer-deps`) discovered during this
   build — also fixed in svc-lab's shared template.

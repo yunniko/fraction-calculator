@@ -7,10 +7,12 @@ standards in `E:\CLAUDE\COMPANY\`.
 
 ## Current state
 
-M1 done and verified locally 2026-09-06: 25 Vitest unit tests pass, 3
-Playwright e2e tests pass (real Chromium browser, real user flows), ESLint
-clean, `npm run build` succeeds with every route statically prerendered.
-Not yet deployed (M2).
+**Live at https://fractions.svc.julienika.cz** (deployed 2026-09-07).
+M1 (build) and M2 (deploy) both done and verified: 25 Vitest unit tests,
+3 Playwright e2e tests, ESLint, and `npm run build` all pass locally;
+in production, verified a real browser computation (1 1/2 + 2/3 = 13/6)
+and confirmed every other container on the shared VPS kept its prior
+uptime (nothing else was disturbed by this deploy).
 
 ## How things fit together
 
@@ -86,18 +88,44 @@ re-discovering it. Revisit if/when this is confirmed fixed upstream (an
 npm version bump might resolve it) — no reason to keep the workaround
 forever.
 
+**D8 — The live `julai-new-vhost` script's certbot step is broken; worked
+around without touching the script.** Running it produced
+`certbot: error: unrecognized arguments: --non-nfo@julienika.cz` — the
+vhost-file/enable/`nginx -t`/reload portion of the script worked fine
+(confirmed: app served 200 over plain HTTP immediately after), but its
+internal certbot invocation is garbled somehow (not diagnosed further —
+the script is root-owned, `cat`-ing it as `claude_remote` returns
+Permission denied, and editing root-owned scripts isn't something JulAI
+does per `INFRASTRUCTURE.md`). Worked around by running
+`sudo /usr/bin/certbot --nginx -d fractions.svc.julienika.cz
+--non-interactive --agree-tos -m info@julienika.cz` directly — this
+exact command is its own separate `NOPASSWD` sudoers entry (confirmed via
+`sudo -n -l`, see `svc-lab/HANDOVER.md`), not something bundled
+exclusively inside the wrapper script, so no privilege escalation beyond
+what was already granted. **This bug will hit every future svc-lab
+deploy** until the Owner fixes the script (root-owned, JulAI can't edit
+it) — flagged in `svc-lab/HANDOVER.md`'s Owner action list rather than
+repeating this note per-service.
+
+**D9 — Git push was rejected by GitHub's email-privacy protection; fixed
+by matching the existing portfolio's per-repo commit-email convention.**
+The initial commit used the global `git config user.email`
+(`nikonorova@email.cz`), which isn't a public/verified email on the
+`yunniko` GitHub account, so `git push` failed with `GH007`. Every other
+portfolio repo's commits use `12hv89@gmail.com` instead (confirmed by
+checking `when-we-meet`'s commit history) — set that as a **repo-local**
+`git config user.email` (not global — scoped to this one repository) and
+amended the not-yet-pushed commit (`--amend --reset-author`, safe since
+nothing had been published yet) to match. Future svc-lab services should
+set this repo-local config from the start to avoid hitting the same
+rejection.
+
 ## Next steps and open questions
 
-- Deploy (M2): git init, push to `yunniko/fraction-calculator` on GitHub
-  (same account/pattern every other portfolio project already uses),
-  clone to `/var/www/repositories/fraction-calculator` on the VPS,
-  `.env` with `APP_URL=https://fractions.svc.julienika.cz`,
-  `docker compose --profile app up -d --build` on port 30040 (confirmed
-  free — see `svc-lab/HANDOVER.md`), `sudo /usr/local/sbin/julai-new-vhost
-  fractions.svc.julienika.cz 30040`, verify over HTTPS, confirm every
-  other site on the host is unaffected.
 - Monetization not yet live — blocked on the Owner creating an ad/payment
   account (see `svc-lab/HANDOVER.md`'s Owner action list).
 - If this pilot's traffic/indexing turns out informative (good or bad),
   feed that back into `svc-lab/GOALS.md`'s idea prioritization before
   picking service #2.
+- `julai-new-vhost`'s certbot bug (D8) needs an Owner fix before the next
+  deploy can rely on the script end-to-end without a manual workaround.
