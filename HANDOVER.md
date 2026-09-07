@@ -53,7 +53,7 @@ STANDARDS.md's anti-overengineering guidance.
 **D4 — Chosen as the pipeline pilot deliberately for low stakes, not
 high expected revenue.** See `svc-lab/GOALS.md`'s idea backlog — the
 research signal behind this idea was weak (one HN thread, not real
-Reddit pain-point mining — see `svc-lab/HANDOVER.md` D6). Picked anyway
+Reddit pain-point mining — see `svc-lab/HANDOVER.md` D8). Picked anyway
 because a wrong bet here costs nothing; the point of this project is
 proving build→deploy→index→monetize works at all, not picking the best
 possible first idea.
@@ -67,7 +67,7 @@ independently addable: the sign applies to the whole magnitude.
 
 **D6 (research caveat, inherited from svc-lab):** this idea's "signal"
 is one HN thread plus reasoned competitor-gap analysis, not verified
-Reddit pain-point mining — see `svc-lab/HANDOVER.md` D6 for the honest
+Reddit pain-point mining — see `svc-lab/HANDOVER.md` D8 for the honest
 account of why. Revenue expectations should be correspondingly modest.
 
 **D7 — `npm install`/`npm ci` require `--legacy-peer-deps` right now.**
